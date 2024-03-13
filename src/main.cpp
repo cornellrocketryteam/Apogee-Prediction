@@ -4,6 +4,8 @@
 #include "hardware/i2c.h"
 #include <stdio.h>
 #include "pico/time.h"
+#include <cmath>
+#include "tusb.h"
 
 
 #define I2C_PORT i2c0
@@ -25,23 +27,27 @@ int main() {
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
 
+#ifdef VERBOSE
+    while (!tud_cdc_connected()) {
+        sleep_ms(500);
+    }
+    printf("Connected\n");
+#endif
+
     bool begun = alt.begin();
     double altitude; // variable actually containing altitude
     bool ret; // boolean checking to see if reading is outputted
     int points_read = 0; // you have read zero altitude points so far
-    double SMA;
     int alt_points;
     int vel_points;
     int SMA_vel_points;
     int total = 0;
     int SMA_length = 256;
-    bool total_summed = 0;
-    int prediction;
+    double prediction;
     int prev_altitude;
     int velocity;
-    uint32_t usSinceBoot;
 
-    // variables for density stuff
+    // variables for density calculations
     int mass = 120; // mass of LV dry in pounds
     double Cd = 0.53; // drag coefficient of LV
     double rho; // air density
@@ -61,6 +67,7 @@ int main() {
     ret = alt.read_altitude(&altitude, 1013.25);
     while (altitude < 1000){
         ret = alt.read_altitude(&altitude, 1013.25);
+        printf("alt: %.3f\n", altitude);
     } // will exit altitude loop when crosses 2000 feet
 
 
@@ -128,12 +135,8 @@ int main() {
             vel_points[&lru] = velocity; // replace newest velocity
             lru = (lru + 1) % SMA_length; // LRU stuff
 
-            
-
-
         }
-        
-
-    
+    }
     return 0;
+    
 }
