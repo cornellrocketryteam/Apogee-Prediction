@@ -35,7 +35,7 @@ int main() {
 #endif
 
     bool begun = alt.begin();
-    double altitude; // variable actually containing altitude
+    float altitude; // variable actually containing altitude
     bool ret; // boolean checking to see if reading is outputted
     int points_read = 0; // you have read zero altitude points so far
     int alt_points;
