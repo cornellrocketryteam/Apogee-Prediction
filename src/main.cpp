@@ -34,7 +34,10 @@ int main() {
     printf("Connected\n");
 #endif
 
+    printf("before\n");
     bool begun = alt.begin();
+    printf("begun: %d", begun);
+    sleep_ms(3000);
     float altitude; // variable actually containing altitude
     bool ret; // boolean checking to see if reading is outputted
     int points_read = 0; // you have read zero altitude points so far
@@ -65,11 +68,17 @@ int main() {
     double timestep = 0.01;
 
     ret = alt.read_altitude(&altitude, 1013.25);
-    while (altitude < 1000){
+    sleep_ms(100);
+    ret = alt.read_altitude(&altitude, 1013.25);
+
+
+
+    while (altitude < 1000){ 
+    //while (altitude < 100){
         ret = alt.read_altitude(&altitude, 1013.25);
         printf("alt: %.3f\n", altitude);
-    } // will exit altitude loop when crosses 2000 feet
 
+    } // will exit altitude loop when crosses 2000 feet
 
     while (true) {
 
@@ -89,6 +98,12 @@ int main() {
                     total = total + vel_points[&i - 1];
                 }
             }
+        }
+
+        printf("Got through 256 loop\n");
+
+        while (true) {
+            // stay in this loop for testing 3/26/24
         }
         // loop is exited after 257 points
         points_read = SMA_length+1; // 257 points were read in that for loop, so 256 velocity points are currently in the velocity vector.
